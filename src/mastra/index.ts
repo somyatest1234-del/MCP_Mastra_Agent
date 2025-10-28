@@ -1,12 +1,22 @@
-import { Mastra } from "@mastra/core";
-import { codingAgent } from "./agents/coding-agent";
-import { LibSQLStore } from "@mastra/libsql";
+import { Mastra } from '@mastra/core/mastra';
+import { LibSQLStore } from '@mastra/libsql';
+import { PinoLogger } from '@mastra/loggers';
+import { codingAgent } from './agents/coding-agent';
 import { cdataMcp } from "./mcp";
 
-const mastraApp = new Mastra({
+export const mastra = new Mastra({
   agents: { codingAgent },
-  storage: new LibSQLStore({ url: "file:../../mastra.db" }),
+  storage: new LibSQLStore({ url: 'file:../../mastra.db' }),
   mcpServers: [cdataMcp],
+  logger: new PinoLogger({
+    name: 'Mastra',
+    level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  }),
+  observability: {
+    default: {
+      enabled: true,
+    },
+  },
 });
 
 export { mastraApp as mastra };
